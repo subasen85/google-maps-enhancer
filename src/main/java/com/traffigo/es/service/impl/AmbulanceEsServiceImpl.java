@@ -79,7 +79,7 @@ public class AmbulanceEsServiceImpl implements AmbulanceEsService {
 					LOG.info("commonVehicleESInfos : "+commonVehicleESInfos.size());
 					// Send push notifcations
 					for (CommonVehicleESInfo commonVehicleESInfo : commonVehicleESInfos) {
-						sendPushNotifcation(commonVehicleESInfo.getAppId());
+						sendPushNotifcation(commonVehicleESInfo.getAppId(),ambulanceDTO.getLatitude(),ambulanceDTO.getLongitude());
 					}
 				}
 				return "success";
@@ -92,7 +92,7 @@ public class AmbulanceEsServiceImpl implements AmbulanceEsService {
 		return "failure";
 	}
 
-	private void sendPushNotifcation(String appId) {
+	private void sendPushNotifcation(String appId,Double amublanceLatitude,Double ambulanceLongitude) {
 		String server_key = "AAAAoL5kIOs:APA91bHusnvoXWsMFQJXzFh84Xqjv9xAU4oyzwDf4230HOWF-HomrYbUGooh1cQ5hY1NmylkHFbDPxr5uZBJmuInwmo1gbTaZlgJalaJznRCOzBs0doZY4uD0TywUhYJjjVRcvsCIjtJ";
 		String FCM_URL = "https://fcm.googleapis.com/fcm/send";
 		try {
@@ -134,6 +134,10 @@ public class AmbulanceEsServiceImpl implements AmbulanceEsService {
 			infoJson.put("title", "GeneralApp");
 
 			infoJson.put("body", "Ambulance very near to u. Pls allow ambulance to go");
+			
+			infoJson.put("amublance_latitude", amublanceLatitude);
+			
+			infoJson.put("ambulance_longitude", ambulanceLongitude);
 
 			infoJson.put("sound", "default");
 
