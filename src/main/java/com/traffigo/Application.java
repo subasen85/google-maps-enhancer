@@ -33,7 +33,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.fasterxml.classmate.TypeResolver;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -57,16 +56,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableAutoConfiguration  // Sprint Boot Auto Configuration
 @ComponentScan(basePackages = "com.traffigo")
-@EnableJpaRepositories("com.traffigo.repository") 
+@EnableJpaRepositories("com.traffigo.es.repository") 
 @PropertySource({"classpath:application.properties"})
 public class Application extends SpringBootServletInitializer {
 	
 
     private static final Class<Application> applicationClass = Application.class;
     private static final Logger log = LoggerFactory.getLogger(applicationClass);
-    
-    @Autowired
-	private TypeResolver typeResolver;
+   
 
 	public static void main(String[] args) {
 		SpringApplication.run(applicationClass, args);
@@ -76,15 +73,7 @@ public class Application extends SpringBootServletInitializer {
         return application.sources(applicationClass);
     }
     
-    @Bean
-	public Docket petApi() {
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build().pathMapping("/")
-				.directModelSubstitute(LocalDate.class, String.class).genericModelSubstitutes(ResponseEntity.class)
-				.alternateTypeRules(newRule(typeResolver.resolve(DeferredResult.class, typeResolver.resolve(ResponseEntity.class, WildcardType.class)), typeResolver.resolve(WildcardType.class)))
-				.useDefaultResponseMessages(false)
-				.globalResponseMessage(RequestMethod.GET, newArrayList(new ResponseMessageBuilder().code(500).message("500 message").responseModel(new ModelRef("Error")).build()))
-				.securitySchemes(newArrayList(apiKey())).securityContexts(newArrayList(securityContext()));
-	}
+ 
     
     private ApiKey apiKey() {
 		return new ApiKey("mykey", "api_key", "header");
